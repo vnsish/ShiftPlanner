@@ -30,12 +30,12 @@ Exemplo tabela de requisitos
 Entradas do usuário: número de funcionários e tabela de requisitos
 
 Cálculo do fitness
-Para cada dia da semana:
+Para cada turno:
 
 |Numero de funcionarios necessarios - numero de funcionarios alocados|
 
-O fitness será a somatória desse cálculo para os 3 dias da semana, quando
-o fitness do individuo é igual a 0, a solução é aceita.
+O fitness será a somatória desse cálculo para os 3 turnos, quando o fitness
+do individuo é igual a 0, a solução é aceita.
 
 
 
