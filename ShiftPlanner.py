@@ -41,18 +41,73 @@ do individuo é igual a 0, a solução é aceita.
 
 """
 
-def gerar():
+import numpy
+
+#def gerar():
 
     #Eric
 
-def mutar():
+#def mutar():
 
     #Tamie
 
-def cruzar():
+#def cruzar():
 
     #Douglas
 
-def avaliar():
+def avaliar(ind, req):
 
-    #Vinicius
+    mat = [[0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]]
+    nota = 0
+    
+    for i in range(len(ind[0])):
+        dia = 0
+        tarde = 0
+        noite = 0
+
+        for j in range(len(ind)):
+            if ind[j][i] == 1:
+                dia = dia + 1
+            if ind[j][i] == 2:
+                tarde = tarde + 1;
+            if ind[j][i] == 3:
+                noite = noite + 1;
+
+        mat[0][i] = dia
+        mat[1][i] = tarde
+        mat[2][i] = noite
+    
+    for i in range(len(mat)):
+        for j in range(len(mat[0])):
+            nota = nota + abs(req[i-1][j-1] - mat[i-1][j-1])
+
+    return nota
+            
+        
+def testeavalia():        
+    indi = [[1, 1, 1, 0, 0, 2, 2], [2, 2, 2, 1, 1, 0, 0], [3, 3, 3, 0, 0, 1, 1], [1, 0, 1, 3, 3, 3, 3]]
+    requ = [[2, 1, 2, 1, 1, 1, 1], [1, 1, 1, 0, 0, 1, 1], [1, 1, 1, 1, 1, 1, 1]]
+
+
+    print(indi)
+    print(requ)
+
+    print(avaliar(indi, requ))
+
+def main():
+
+    func = input('Numero de funcionarios: ')
+    print('Insira a tabela de requisitos: ')
+          
+    req = [[0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]]
+    dias = ['Domingo', 'Segunda-feira', 'Terca-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sabado']
+    
+    for i in range(len(req)):
+        for j in range(len(req[0])):
+            req[i][j] = input('Turno {0} - {1}: '.format(i+1, dias[j]))
+
+    print(req)
+
+
+main()
+                
