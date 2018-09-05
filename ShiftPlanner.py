@@ -41,9 +41,23 @@ do individuo é igual a 0, a solução é aceita.
 
 """
 
-#def gerar():
+def gerar():
+   poblation = []
+	workers= int(input("funcionarios: "))
+	for z in range(0,1000):
+		poblation += [produceACromossome(workers)]
+	
+	return poblation
 
-    #Eric
+def produceACromossome(workers):
+	candidate = []
+	poblation = []
+	for x in range(0, workers):
+		for y in range (0, 6):
+			candidate.append(random.randint(0,3))
+		poblation += [candidate]
+		candidate = []
+	return poblation
 
 #def mutar():
 
@@ -105,6 +119,8 @@ def main():
           
     req = [[0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]]
     dias = ['Domingo', 'Segunda-feira', 'Terca-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sabado']
+    
+    poblation = gerar()
     
     for i in range(len(req)):
         for j in range(len(req[0])):
