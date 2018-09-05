@@ -41,27 +41,87 @@ do individuo é igual a 0, a solução é aceita.
 
 """
 
+import random
+
+class Cromossomo:
+   def __init__(self, funcionarios, tabela = []):
+      tabela = []
+      self.taxa = 1
+      self.fit = -1
+      agenda = []
+      for x in range(0, funcionarios):
+         for y in range (0, 7):
+            agenda.append(random.randint(0,3))
+         tabela += [agenda]
+         agenda = []
+      self.tabela = tabela
+
+   def avalia(self, req):
+
+      mat = [[0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]]
+      self.fit = 0
+      
+      for i in range(len(self.tabela[0])):
+        dia = 0
+        tarde = 0
+        noite = 0
+
+        for j in range(len(self.tabela)):
+            if self.tabela[j][i] == 1:
+                dia = dia + 1
+            if self.tabela[j][i] == 2:
+                tarde = tarde + 1;
+            if self.tabela[j][i] == 3:
+                noite = noite + 1;
+
+        mat[0][i] = dia
+        mat[1][i] = tarde
+        mat[2][i] = noite
+    
+      for i in range(len(mat)):
+        for j in range(len(mat[0])):
+            self.fit = self.fit + abs(req[i-1][j-1] - mat[i-1][j-1])
+            
+   def mutar(self):
+      if(random.random() < self.taxa):
+         self.tabela[random.randint(0, len(self.tabela)-1)][random.randint(0, 6)] = random.randint(0,3)
+
+   def cruzar(self, c):
+      filho = self
+      
+      a = random.randint(0, len(self.tabela)-1)
+      b = random.randint(0, 6)
+
+      filho.tabela[a][b] = c.tabela[a][b]
+
+      return filho
+
+
+   #def criar(funcionarios):
+      
+
 def gerar():
    poblation = []
-	workers= int(input("funcionarios: "))
-	for z in range(0,1000):
-		poblation += [produceACromossome(workers)]
+   workers = int(input("funcionarios: "))
+   for z in range(0,3):
+      c = Cromossomo(workers)
+      poblation.append(c)
 	
-	return poblation
+   return poblation
 
 def produceACromossome(workers):
 	candidate = []
 	poblation = []
 	for x in range(0, workers):
-		for y in range (0, 6):
+		for y in range (0, 7):
 			candidate.append(random.randint(0,3))
 		poblation += [candidate]
 		candidate = []
 	return poblation
 
-#def mutar():
+#def mutar(cromossomo):
 
-    #Tamie
+    
 
 #def cruzar():
 
@@ -96,37 +156,46 @@ def avaliar(ind, req):
     return nota
             
         
-def testeavalia():        
-    indi = [[1, 1, 1, 0, 0, 2, 2],
-            [2, 2, 2, 1, 1, 0, 0],
-            [3, 3, 3, 0, 0, 1, 1],
-            [1, 0, 1, 3, 3, 3, 3]]
-    
-    requ = [[2, 1, 2, 1, 1, 1, 1],
-            [1, 1, 1, 0, 0, 1, 1],
-            [1, 1, 1, 1, 1, 1, 1]]
-
-
-    print(indi)
-    print(requ)
-
-    print(avaliar(indi, requ))
-
+def aleatorio(pop):
+   random.shuffle(pop)
+   return pop[0]
+   
+   
 def main():
 
-    func = input('Numero de funcionarios: ')
+    poblation = gerar()
+    for c in poblation:
+       print(c.tabela)
+    
     print('Insira a tabela de requisitos: ')
           
     req = [[0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]]
     dias = ['Domingo', 'Segunda-feira', 'Terca-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sabado']
-    
-    poblation = gerar()
-    
+
     for i in range(len(req)):
         for j in range(len(req[0])):
-            req[i][j] = input('Turno {0} - {1}: '.format(i+1, dias[j]))
+            req[i][j] = int(input('Turno {0} - {1}: '.format(i+1, dias[j])))
 
-    print(req)
+    found = 0
+   
+    while found == 0:
+      
+      for c in poblation:
+          c.mutar()
+          c.avalia(req)
+          if (c.fit == 0):
+             found = 1
+             solucao = c
+
+      nova = []
+      for i in range(len(poblation)-1):
+         a = aleatorio(poblation)
+         b = aleatorio(poblation)
+         c = a.cruzar(b)
+         nova.append(c)
+      poblation = nova
+      #poblation.sort(key = lambda x: x.fit)          
+    print(solucao.tabela)
 
 
 main()
