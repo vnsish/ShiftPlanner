@@ -96,76 +96,27 @@ class Cromossomo:
 
       return filho
 
-
-   #def criar(funcionarios):
       
 
 def gerar():
-   poblation = []
+   populacao = []
    workers = int(input("funcionarios: "))
-   for z in range(0,3):
+   for z in range(0,200):
       c = Cromossomo(workers)
-      poblation.append(c)
+      populacao.append(c)
 	
-   return poblation
-
-def produceACromossome(workers):
-	candidate = []
-	poblation = []
-	for x in range(0, workers):
-		for y in range (0, 7):
-			candidate.append(random.randint(0,3))
-		poblation += [candidate]
-		candidate = []
-	return poblation
-
-#def mutar(cromossomo):
-
-    
-
-#def cruzar():
-
-    #Douglas
-
-def avaliar(ind, req):
-
-    mat = [[0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]]
-    nota = 0
-    
-    for i in range(len(ind[0])):
-        dia = 0
-        tarde = 0
-        noite = 0
-
-        for j in range(len(ind)):
-            if ind[j][i] == 1:
-                dia = dia + 1
-            if ind[j][i] == 2:
-                tarde = tarde + 1;
-            if ind[j][i] == 3:
-                noite = noite + 1;
-
-        mat[0][i] = dia
-        mat[1][i] = tarde
-        mat[2][i] = noite
-    
-    for i in range(len(mat)):
-        for j in range(len(mat[0])):
-            nota = nota + abs(req[i-1][j-1] - mat[i-1][j-1])
-
-    return nota
-            
+   return populacao            
         
 def aleatorio(pop):
+   
+   
    random.shuffle(pop)
    return pop[0]
    
    
 def main():
 
-    poblation = gerar()
-    for c in poblation:
-       print(c.tabela)
+    populacao = gerar()
     
     print('Insira a tabela de requisitos: ')
           
@@ -179,22 +130,23 @@ def main():
     found = 0
    
     while found == 0:
-      
-      for c in poblation:
-          c.mutar()
+      for c in populacao:
           c.avalia(req)
           if (c.fit == 0):
              found = 1
              solucao = c
 
+      populacao.sort(key = lambda x: x.fit)
+
       nova = []
-      for i in range(len(poblation)-1):
-         a = aleatorio(poblation)
-         b = aleatorio(poblation)
+      for i in range(len(populacao)):
+         a = aleatorio(populacao)
+         b = populacao[0]
          c = a.cruzar(b)
+         c.mutar()
          nova.append(c)
-      poblation = nova
-      #poblation.sort(key = lambda x: x.fit)          
+      populacao = nova
+      
     print(solucao.tabela)
 
 
