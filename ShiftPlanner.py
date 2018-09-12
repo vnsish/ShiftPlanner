@@ -46,7 +46,7 @@ import random
 class Cromossomo:
    def __init__(self, funcionarios, tabela = []):
       tabela = []
-      self.taxa = 1
+      self.taxa = 0.8
       self.fit = -1
       agenda = []
       for x in range(0, funcionarios):
@@ -60,7 +60,7 @@ class Cromossomo:
 
       mat = [[0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]]
       self.fit = 0
-      
+
       for i in range(len(self.tabela[0])):
         dia = 0
         tarde = 0
@@ -77,58 +77,91 @@ class Cromossomo:
         mat[0][i] = dia
         mat[1][i] = tarde
         mat[2][i] = noite
-    
+
       for i in range(len(mat)):
         for j in range(len(mat[0])):
             self.fit = self.fit + abs(req[i-1][j-1] - mat[i-1][j-1])
-            
+
    def mutar(self):
       if(random.random() < self.taxa):
          self.tabela[random.randint(0, len(self.tabela)-1)][random.randint(0, 6)] = random.randint(0,3)
 
+   def cruzar_alt(self, c):
+       filho = self
+
+       rate = 0.5
+
+       point = random.randint(0, len(self.tabela)-1)
+
+       for i in range(0, len(self.tabela[0])):
+           for j in range(0, len(self.tabela)):
+               if (random.random() < rate):
+                   filho.tabela[j][i] = c.tabela[j][i]
+
+       return filho
+
+
    def cruzar(self, c):
       filho = self
-      
+
       a = random.randint(0, len(self.tabela)-1)
       b = random.randint(0, 6)
-
       filho.tabela[a][b] = c.tabela[a][b]
 
       return filho
 
-      
+
 
 def gerar():
    populacao = []
    workers = int(input("funcionarios: "))
-   for z in range(0,200):
+   for z in range(0,100):
       c = Cromossomo(workers)
       populacao.append(c)
-	
-   return populacao            
-        
+
+   return populacao
+
 def aleatorio(pop):
-   
-   
-   random.shuffle(pop)
-   return pop[0]
-   
-   
+
+    pop.sort(key = lambda x: x.fit, reverse=True)
+
+    soma = 0
+    for i in pop:
+        soma = soma + i.fit
+    treshold = random.random()
+
+    acc = 0
+    for i in pop:
+        acc = acc + (i.fit)/soma
+        if (acc > treshold):
+            return i
+
+    return pop[0]
+
+def aleatoriotorneio(pop):
+    random.shuffle(pop)
+    if (pop[0].fit < pop[1].fit):
+        return pop[0]
+    else:
+        return pop[1]
+
 def main():
 
     populacao = gerar()
-    
+
     print('Insira a tabela de requisitos: ')
-          
-    req = [[0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]]
+
+    req = [[1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1]]
     dias = ['Domingo', 'Segunda-feira', 'Terca-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sabado']
 
-    for i in range(len(req)):
+    '''for i in range(len(req)):
         for j in range(len(req[0])):
             req[i][j] = int(input('Turno {0} - {1}: '.format(i+1, dias[j])))
+    '''
+
 
     found = 0
-   
+
     while found == 0:
       for c in populacao:
           c.avalia(req)
@@ -137,18 +170,17 @@ def main():
              solucao = c
 
       populacao.sort(key = lambda x: x.fit)
+      print('melhor individuo: {0} - pior individuo: {1}'.format(populacao[0].fit, populacao[len(populacao)-1].fit));
 
       nova = []
       for i in range(len(populacao)):
-         a = aleatorio(populacao)
-         b = populacao[0]
-         c = a.cruzar(b)
+         a = aleatoriotorneio(populacao)
+         b = aleatoriotorneio(populacao)
+         c = a.cruzar_alt(b)
          c.mutar()
          nova.append(c)
       populacao = nova
-      
     print(solucao.tabela)
 
 
 main()
-                
