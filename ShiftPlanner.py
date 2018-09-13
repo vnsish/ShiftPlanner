@@ -1,5 +1,5 @@
 """
-Problema: Alocação de turnos
+Problema: Alocao de turnos
 
 Individuo:
 
@@ -46,7 +46,8 @@ import random
 class Cromossomo:
    def __init__(self, funcionarios, tabela = []):
       tabela = []
-      self.taxa = 0.8
+      self.workers = funcionarios
+      self.taxa = 0.2
       self.fit = -1
       agenda = []
       for x in range(0, funcionarios):
@@ -86,31 +87,22 @@ class Cromossomo:
       if(random.random() < self.taxa):
          self.tabela[random.randint(0, len(self.tabela)-1)][random.randint(0, 6)] = random.randint(0,3)
 
-   def cruzar_alt(self, c):
-       filho = self
+   def cruzar(self, c):
+       filho = Cromossomo(c.workers)
+       for i in range(0, len(self.tabela)):
+           for j in range(0, len(self.tabela[0])):
+               filho.tabela[i][j] = self.tabela[i][j]
 
-       rate = 0.5
+       rate = 0.2
 
        point = random.randint(0, len(self.tabela)-1)
 
-       for i in range(0, len(self.tabela[0])):
-           for j in range(0, len(self.tabela)):
+       for i in range(0, len(self.tabela)):
+           for j in range(0, len(self.tabela[0])):
                if (random.random() < rate):
-                   filho.tabela[j][i] = c.tabela[j][i]
+                   filho.tabela[i][j] = c.tabela[i][j]
 
        return filho
-
-
-   def cruzar(self, c):
-      filho = self
-
-      a = random.randint(0, len(self.tabela)-1)
-      b = random.randint(0, 6)
-      filho.tabela[a][b] = c.tabela[a][b]
-
-      return filho
-
-
 
 def gerar():
    populacao = []
@@ -121,29 +113,16 @@ def gerar():
 
    return populacao
 
-def aleatorio(pop):
 
-    pop.sort(key = lambda x: x.fit, reverse=True)
-
-    soma = 0
-    for i in pop:
-        soma = soma + i.fit
-    treshold = random.random()
-
-    acc = 0
-    for i in pop:
-        acc = acc + (i.fit)/soma
-        if (acc > treshold):
-            return i
-
-    return pop[0]
-
-def aleatoriotorneio(pop):
+def selecionartorneio(pop):
     random.shuffle(pop)
-    if (pop[0].fit < pop[1].fit):
-        return pop[0]
-    else:
-        return pop[1]
+    new = []
+
+    for i in range(0,5):
+        new.append(pop[i])
+
+    new.sort(key = lambda x:x.fit)
+    return(new[0])
 
 def main():
 
@@ -154,11 +133,9 @@ def main():
     req = [[1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1]]
     dias = ['Domingo', 'Segunda-feira', 'Terca-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sabado']
 
-    '''for i in range(len(req)):
+    for i in range(len(req)):
         for j in range(len(req[0])):
             req[i][j] = int(input('Turno {0} - {1}: '.format(i+1, dias[j])))
-    '''
-
 
     found = 0
 
@@ -174,9 +151,9 @@ def main():
 
       nova = []
       for i in range(len(populacao)):
-         a = aleatoriotorneio(populacao)
-         b = aleatoriotorneio(populacao)
-         c = a.cruzar_alt(b)
+         a = selecionartorneio(populacao)
+         b = selecionartorneio(populacao)
+         c = a.cruzar(b)
          c.mutar()
          nova.append(c)
       populacao = nova
